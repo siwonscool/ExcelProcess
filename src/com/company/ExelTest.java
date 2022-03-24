@@ -74,8 +74,8 @@ public class ExelTest {
         Map<String,String> map = new HashMap<>();
         for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < list.get(i).size(); j++) {
-                if (list.get(i).get(j).equals("서버 가상화")){
-                    //if (Server32Core(list,i) || Server40Core(list,i)){
+                if (StorageCheck(list,i,j)){
+                    if (Storage25TB(list,i)||Storage40TB(list,i)){
                         if (map.get(list.get(i).get(1))!=null){
                             double beforeValue = Double.parseDouble(map.get(list.get(i).get(1)));
                             double afterValue = Double.parseDouble(list.get(i).get(5));
@@ -87,7 +87,7 @@ public class ExelTest {
                             int intValue = (int) beforeValue;
                             map.put(list.get(i).get(1), intValue+"");
                         }
-                    //}
+                    }
                 }
             }
         }
@@ -102,6 +102,16 @@ public class ExelTest {
         System.out.println();
         System.out.println("기관수 : "+map.size());
         System.out.println("총 기기 수 : "+testValue);
+    }
+
+    public static boolean ServerCheck(List<List<String>> list,int rowNum,int columNum){
+        return list.get(rowNum).get(columNum).equals("AP 및 문서변환 서버")||
+                list.get(rowNum).get(columNum).equals("DB서버 #1")||
+                list.get(rowNum).get(columNum).equals("DB서버 #2");
+    }
+
+    public static boolean StorageCheck(List<List<String>> list,int rowNum,int columNum){
+        return list.get(rowNum).get(columNum).equals("스토리지");
     }
 
     public static boolean Server80Core(List<List<String>> list,int rowNum){
@@ -119,6 +129,15 @@ public class ExelTest {
                 list.get(rowNum).get(4).equals("Intel Xeon 2세대 2.9GHz*2, 32Core, 256GB, HDD(SSD) 480GB*2EA, 10GbE*2Ports")||
                 list.get(rowNum).get(4).equals("Intel Xeon 2세대 2.9GHz*2, 32Core, 256GB, HDD(SSD) 480GB*2EA, HBA*2Ports, 10GbE*2Ports")||
                 list.get(rowNum).get(4).equals("Intel Xeon 2세대 2.9GHz*2, 32Core, 256GB, HDD(SSD) 480GB*2EA, HBA*4Ports, 10GbE*2Ports");
+    }
+
+    public static boolean Storage25TB(List<List<String>> list,int rowNum){
+        return list.get(rowNum).get(4)
+                .equals("NAS 스토리지(All Flash), 용량 : Usable 25TB 이상(Host 10Gb/s), 캐시 메모리 : 128GB 이상, SAN스토리지 포트 추가(ConvergedHostboard, 8*16GbFC), 컨트롤러이중화(Active-Active)");
+    }
+    public static boolean Storage40TB(List<List<String>> list,int rowNum){
+        return list.get(rowNum).get(4)
+                .equals("NAS 스토리지(All Flash), 용량 : Usable 40TB 이상(Host 10Gb/s), 캐시 메모리 : 128GB 이상, SAN스토리지 포트 추가(ConvergedHostboard, 8*16GbFC), 컨트롤러이중화(Active-Active)");
     }
 
 }
