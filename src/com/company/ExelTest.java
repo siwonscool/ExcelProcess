@@ -74,8 +74,8 @@ public class ExelTest {
         Map<String,String> map = new HashMap<>();
         for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < list.get(i).size(); j++) {
-                if (StorageCheck(list,i,j)){
-                    if (Storage25TB(list,i)||Storage40TB(list,i)){
+                if (list.get(i).get(j).equals("L4 스위치")){
+                    //if (Storage25TB(list,i)){
                         if (map.get(list.get(i).get(1))!=null){
                             double beforeValue = Double.parseDouble(map.get(list.get(i).get(1)));
                             double afterValue = Double.parseDouble(list.get(i).get(5));
@@ -87,7 +87,7 @@ public class ExelTest {
                             int intValue = (int) beforeValue;
                             map.put(list.get(i).get(1), intValue+"");
                         }
-                    }
+                    //}
                 }
             }
         }
@@ -97,7 +97,8 @@ public class ExelTest {
         while (entries.hasNext()){
             Map.Entry<String,String> entry = entries.next();
             testValue += Double.parseDouble(entry.getValue());
-            System.out.print(entry.getKey()+"청 "+entry.getValue()+"식, ");
+            System.out.print(entry.getKey()+", ");
+            //"+entry.getValue()+"식
         }
         System.out.println();
         System.out.println("기관수 : "+map.size());
