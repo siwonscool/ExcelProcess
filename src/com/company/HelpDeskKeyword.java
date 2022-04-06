@@ -13,46 +13,55 @@ import java.util.stream.Collectors;
 public class HelpDeskKeyword {
     public static String path = "C:\\Users\\urp시스템\\Desktop\\helpDesk 분석\\";	//파일 경로 설정
     public static String filename = "연도별 분할 데이터.xlsx";	//파일명 설정
+    public static String[] categories = {"PC 환경","전자문서","과제관리","메모보고"};
 
     public static List<List<String>> data = readExcel(path,filename,1);
 
     public static void main(String[] args) {
+        List<List<String>> results = new ArrayList<>();
+        List<List<String>> data7Lists = new ArrayList<>();
 
         // PC 환경 / 전자문서 / 시스템 연계 / 각종 기능 / 과제관리 / 기타 / 메모보고 / 성능 / 웹 기안기
-        String[] category = {"PC 환경","전자문서","시스템 연계","각종 기능","과제관리","기타","메모보고","성능","웹 기안기"};
         //for : category
+        for (int i = 0; i < categories.length; i++) {
+            List<String> data7List = createColumnList(data,7,categories[i]);
 
-            List<String> data7List = createColumnList(data,7,"전자문서");
+            results.add(startKeywordProcess(data7List));
+            data7Lists.add(data7List);
+        }
 
-            List<Map.Entry<String, Double>> similarityList = checkSimilarity(data7List, initDistinctWordSet(data7List));
-
-            Map<String,Double> detailOneSimilarityMap = detailSimilarity(data7List,similarityList);
-            List<Map.Entry<String,Double>> similarity2List = detailOneSimilarityMap.entrySet().stream()
-                    .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                    .collect(Collectors.toList());
-
-            Map<String,Double> detailTwoSimilarityMap = detailSimilarity(data7List,similarity2List);
-            List<Map.Entry<String,Double>> similarity3List = detailTwoSimilarityMap.entrySet().stream()
-                    .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                    .collect(Collectors.toList());
-
-            Map<String,Double> detailThreeSimilarityMap = detailSimilarity(data7List,similarity3List);
-
-            List<String> result = detailThreeSimilarityMap.entrySet().stream()
-                    .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                    .map(it -> it.getKey())
-                    .collect(Collectors.toList());
-
-            detailThreeSimilarityMap.entrySet().stream()
-                    .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                    .forEach(System.out::println);
-
-        createExcel(data, data7List, result, "2021년도분석", path);
+        createExcel(data, data7Lists, results, "2021년도분석", path);
 
     }
 
-    public static void startKeywordProcess(){
+    public static List<String> startKeywordProcess(List<String> data7List){
 
+        List<Map.Entry<String, Double>> similarityList = checkSimilarity(data7List, initDistinctWordSet(data7List));
+
+        Map<String,Double> detailOneSimilarityMap = detailSimilarity(data7List,similarityList);
+        List<Map.Entry<String,Double>> similarity2List = detailOneSimilarityMap.entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(Collectors.toList());
+
+        Map<String,Double> detailTwoSimilarityMap = detailSimilarity(data7List,similarity2List);
+        List<Map.Entry<String,Double>> similarity3List = detailTwoSimilarityMap.entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(Collectors.toList());
+
+        Map<String,Double> detailThreeSimilarityMap = detailSimilarity(data7List,similarity3List);
+
+        List<String> result = detailTwoSimilarityMap.entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .map(it -> it.getKey())
+                .collect(Collectors.toList());
+
+        detailTwoSimilarityMap.entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .forEach(System.out::println);
+
+        System.out.println("======================================");
+
+        return result;
     }
 
     public static List<List<String>> readExcel(String path,String filename,int sheetIndex) {
@@ -109,48 +118,50 @@ public class HelpDeskKeyword {
         return list;
     }
 
-    public static void createExcel(List<List<String>> originData, List<String> column7List, List<String> result, String filename, String path){
-        ArrayList<String> filterList = new ArrayList<>();
+    public static void createExcel(List<List<String>> originData, List<List<String>> column7List, List<List<String>> result, String filename, String path){
 
         try{
             Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("sheet1");
-            for (int i = 0; i < result.size(); i++) {
-                for (int j = 0; j < column7List.size(); j++) {
-                    if (column7List.get(j).contains(result.get(i))) {
-                        filterList.add(column7List.get(j));
-                    }
-                }
-            }
-
-            ArrayList<String> distinctFilterList = (ArrayList<String>) filterList.stream().distinct().collect(Collectors.toList());
-
-            for (int k = 0; k < distinctFilterList.size(); k++) {
-                for (int i = 0; i < originData.size(); i++) {
-                    if (originData.get(i).get(7).equals(distinctFilterList.get(k))){
-                        Row row = sheet.createRow(k);
-                        for (int j = 0; j < originData.get(i).size(); j++) {
-                            Cell cell = row.createCell(j);
-                            cell.setCellValue(originData.get(i).get(j));
+            for (int init = 0; init < categories.length; init++) {
+                ArrayList<String> filterList = new ArrayList<>();
+                Sheet sheet = workbook.createSheet(categories[init]);
+                for (int i = 0; i < result.get(init).size(); i++) {
+                    for (int j = 0; j < column7List.get(init).size(); j++) {
+                        if (column7List.get(init).get(j).contains(result.get(init).get(i))) {
+                            filterList.add(column7List.get(init).get(j));
                         }
                     }
                 }
-            }
 
-            /*loop1 : for (int k = 0; k < filterList.size(); k++) {
-                for (int i = 0; i < originData.size(); i++) {
-                    if (originData.get(i).get(7).equals(filterList.get(k))){
-                        Row row = sheet.createRow(k);
-                        System.out.println(originData.get(i).get(6) + " : "+originData.get(i).get(7));
-                        for (int j = 0; j < originData.get(i).size(); j++) {
-                            Cell cell = row.createCell(j);
-                            cell.setCellValue(originData.get(i).get(j));
+                ArrayList<String> distinctFilterList = (ArrayList<String>) filterList.stream().distinct().collect(Collectors.toList());
+
+                for (int k = 0; k < distinctFilterList.size(); k++) {
+                    for (int i = 0; i < originData.size(); i++) {
+                        if (originData.get(i).get(7).equals(distinctFilterList.get(k))){
+                            Row row = sheet.createRow(k);
+                            for (int j = 0; j < originData.get(i).size(); j++) {
+                                Cell cell = row.createCell(j);
+                                cell.setCellValue(originData.get(i).get(j));
+                            }
                         }
-                        originData.remove(i);
-                        continue loop1;
                     }
                 }
-            }*/
+
+                /*loop1 : for (int k = 0; k < filterList.size(); k++) {
+                    for (int i = 0; i < originData.size(); i++) {
+                        if (originData.get(i).get(7).equals(filterList.get(k))){
+                            Row row = sheet.createRow(k);
+                            System.out.println(originData.get(i).get(6) + " : "+originData.get(i).get(7));
+                            for (int j = 0; j < originData.get(i).size(); j++) {
+                                Cell cell = row.createCell(j);
+                                cell.setCellValue(originData.get(i).get(j));
+                            }
+                            originData.remove(i);
+                            continue loop1;
+                        }
+                    }
+                }*/
+            }
 
             String localFile = path + filename +".xlsx";
             File file = new File(localFile);
@@ -249,7 +260,7 @@ public class HelpDeskKeyword {
                 .filter(it -> it.get(4).contains(word))
                 .map(it -> it.get(column))
                 .collect(Collectors.toList());
-
+        System.out.println(columnList.size());
         return columnList;
     }
 
