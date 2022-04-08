@@ -1,6 +1,7 @@
 package com.company;
 
 import com.company.dto.ExcelDto;
+import com.company.service.CompareDataService;
 import com.company.service.FindCategoryService;
 import com.company.service.HelpDeskKeywordService;
 
@@ -19,6 +20,7 @@ public class Main {
 
     static HelpDeskKeywordService helpDeskKeywordService = new HelpDeskKeywordService();
     static FindCategoryService findCategoryService = new FindCategoryService();
+    static CompareDataService compareDataService = new CompareDataService();
 
     public static void main(String[] args) {
 
@@ -38,5 +40,6 @@ public class Main {
 
         List<String> resultCategory = findCategoryService.calculateCategoryScore(inputDataDto.readExcel(), keywordResults, categories);
         findCategoryService.updateInputData(inputDataDto,resultCategory);
+        compareDataService.createCompareResultExcel(originDataDto.readExcel(),inputDataDto.readExcel(),path,"오차 분석");
     }
 }

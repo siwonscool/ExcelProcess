@@ -13,6 +13,7 @@ public class FindCategoryService {
     public List<String> calculateCategoryScore(List<List<String>> inputData, List<List<String>> keywordResults,String[] categories) {
         List<List<Double>> categoryScore = new ArrayList<>();
         double[] scoreBoard = initScoreBoard(categories, 0.1);
+        keywordResults = distinctKeywordResult(keywordResults);
 
         for (int i = 0; i < inputData.size(); i++) {
             categoryScore.add(new ArrayList<>());
@@ -28,6 +29,23 @@ public class FindCategoryService {
         }
 
         return peekMaxCategory(categoryScore,categories);
+    }
+
+    private static List<List<String>> distinctKeywordResult(List<List<String>> keywordResults){
+        for (int i = 0; i < keywordResults.size() - 1; i++) {
+            for (int j = i + 1; j < keywordResults.size(); j++) {
+                for (int k = 0; k < keywordResults.get(i).size()/2 + keywordResults.get(i).size()*98/900 ; k++) { //중복제거 범위 조정
+                    for (int l = 0; l < keywordResults.get(j).size(); l++) {
+                        if (keywordResults.get(i).get(k).equals(keywordResults.get(j).get(l))){
+                            keywordResults.get(j).remove(l);
+                            l--;
+                        }
+                    }
+                }
+            }
+        }
+
+        return keywordResults;
     }
 
     private static double[] initScoreBoard(String[] categories, double increment){
