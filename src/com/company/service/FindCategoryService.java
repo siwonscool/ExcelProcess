@@ -6,6 +6,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FindCategoryService {
@@ -34,7 +35,7 @@ public class FindCategoryService {
     private static List<List<String>> distinctKeywordResult(List<List<String>> keywordResults){
         for (int i = 0; i < keywordResults.size() - 1; i++) {
             for (int j = i + 1; j < keywordResults.size(); j++) {
-                for (int k = 0; k < keywordResults.get(i).size()/2 + keywordResults.get(i).size()*98/900 ; k++) { //중복제거 범위 조정
+                for (int k = 0; k < keywordResults.get(i).size()*19/20; k++) { //중복제거 범위 조정
                     for (int l = 0; l < keywordResults.get(j).size(); l++) {
                         if (keywordResults.get(i).get(k).equals(keywordResults.get(j).get(l))){
                             keywordResults.get(j).remove(l);
@@ -52,7 +53,7 @@ public class FindCategoryService {
         double[] scoreBoard = new double[categories.length];
         double startValue = 1.0;
 
-        for (int i = scoreBoard.length -1 ; i >= 0 ; i--) {
+        for (int i = 0 ; i < scoreBoard.length ; i++) {
             scoreBoard[i] = startValue;
             startValue += increment;
         }

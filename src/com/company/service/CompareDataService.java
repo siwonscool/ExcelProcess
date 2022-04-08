@@ -17,24 +17,26 @@ import java.util.stream.Collectors;
 public class CompareDataService {
     private List<List<String>> compareDifferentData(List<List<String>> originData, List<List<String>> resultData){
         List<List<String>> comparedData = new ArrayList<>();
-
+        double errorCount = 0;
+        //originData.get(i).get(4).equals("전자문서") &&
         for (int i = 0; i < originData.size(); i++) {
             if (!originData.get(i).get(4).equals(resultData.get(i).get(4))){
                 comparedData.add(originData.get(i));
                 comparedData.add(resultData.get(i));
+                errorCount++;
+                comparedData.add(new ArrayList<>());
             }
         }
+        double errorRate = errorCount / originData.size() * 100;
+
+        System.out.println("오차 데이터 크기 : " + errorCount);
+        System.out.println("원본 데이터와 오차율 : " + errorRate + " %");
 
         return comparedData;
     }
 
     public void createCompareResultExcel(List<List<String>> originData, List<List<String>> resultData, String path, String filename){
         List<List<String>> compareData = compareDifferentData(originData, resultData);
-        double errorCount = compareData.size() / 2;
-        double errorRate = errorCount / originData.size() * 100;
-
-        System.out.println("오차 데이터 크기 : " + errorCount);
-        System.out.println("원본 데이터와 오차율 : " + errorRate + " %");
 
         try{
             Workbook workbook = new XSSFWorkbook();

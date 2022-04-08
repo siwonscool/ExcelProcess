@@ -36,8 +36,6 @@ public class Main {
             data7Lists.add(data7List);
         }
 
-        //helpDeskKeywordService.createExcel(data, data7Lists, keywordResults, "2021년도분석", path, categories);
-
         List<String> resultCategory = findCategoryService.calculateCategoryScore(inputDataDto.readExcel(), keywordResults, categories);
         findCategoryService.updateInputData(inputDataDto,resultCategory);
         compareDataService.createCompareResultExcel(originDataDto.readExcel(),inputDataDto.readExcel(),path,"오차 분석");

@@ -34,6 +34,7 @@ public class HelpDeskKeywordService {
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .map(it -> it.getKey())
                 .collect(Collectors.toList());
+
     }
 
     private Set<String> initDistinctWordSet(List<String> columnList){
@@ -113,7 +114,6 @@ public class HelpDeskKeywordService {
     }
 
     private List<Map.Entry<String, Double>> checkSimilarity(List<String> columnList, Set<String> distinctWordSet){
-
         Map<String,Double> wordSimilarityMap = new HashMap<>();
 
         for (String str : distinctWordSet) {
